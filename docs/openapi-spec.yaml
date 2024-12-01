@@ -1,0 +1,108 @@
+openapi: "3.0.0"
+info:
+  version: "1"
+  title: "TODO List"
+  description: ""
+paths:
+  /todos/{user_id}:
+    get:
+      operationId: "get_todos"
+      description: ""
+      parameters:
+        - in: "path"
+          name: "user_id"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/todo"
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+        401:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+        403:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+    post:
+      operationId: "add_todo"
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/todo"
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+  /todos/{user_id}/{todo_id}:
+    put:
+      operationId: "update_todo"
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/todo"
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+    delete:
+      operationId: "delete_todo"
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "string"
+components:
+  securitySchemes: {}
+  schemas:
+    todo:
+      properties:
+        data:
+          nullable: false
+          type: "string"
+        complete:
+          nullable: false
+          type: "boolean"
+        completed_timestamp:
+          nullable: false
+          type: "number"
+    todos:
+      properties: {}

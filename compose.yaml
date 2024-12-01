@@ -1,0 +1,11 @@
+services:
+  app: 
+    build:
+      context: .
+    image: data-service:0.1.0
+    container_name: app
+    ports:
+      - 8080:8000
+    environment:
+      - IS_PRODUCTION=false
+      - USE_WSGI=true
