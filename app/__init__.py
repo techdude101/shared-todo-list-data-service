@@ -7,6 +7,7 @@ based on the value of the CONFIG_TYPE environment variable
 
 import os
 from flask import Flask, json
+from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from app.main.request_log_formatter import RequestFormatter
 
@@ -15,6 +16,7 @@ from app.main.request_log_formatter import RequestFormatter
 def create_app():
 
     app = Flask(__name__)
+    CORS(app, resources={r"*": {"origins": "*"}})
 
     # Configure the flask app instance
     # CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')  # noqa: E501

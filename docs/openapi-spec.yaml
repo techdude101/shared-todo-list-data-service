@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: "1"
-  title: "TODO List"
+  title: "To-Do List"
   description: ""
 paths:
   /todos/{user_id}:
@@ -24,44 +24,53 @@ paths:
                 items:
                   $ref: "#/components/schemas/todo"
         400:
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: "string"
+          $ref: "#/components/responses/InvalidParamaters"
         401:
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: "string"
+          $ref: "#/components/responses/Unauthorized"
         403:
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: "string"
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: "add_todo"
       description: ""
-      parameters: []
+      parameters:
+        - in: "path"
+          name: "user_id"
+          required: true
+          schema:
+            type: "integer"
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/todo"
       responses:
-        200:
-          description: ""
+        201:
+          description: "Created"
           content:
             application/json:
               schema:
-                type: "string"
+                $ref: "#/components/schemas/todo"
+        400:
+          $ref: "#/components/responses/InvalidParamaters"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
   /todos/{user_id}/{todo_id}:
     put:
       operationId: "update_todo"
       description: ""
-      parameters: []
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+        - name: "todo_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
       requestBody:
         content:
           application/json:
@@ -73,16 +82,27 @@ paths:
           content:
             application/json:
               schema:
-                type: "string"
+                $ref: "#/components/schemas/todo"
+        400:
+          $ref: "#/components/responses/InvalidParamaters"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
     delete:
       operationId: "delete_todo"
       description: ""
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: "string"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+        - name: "todo_id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
       responses:
         200:
           description: ""
@@ -90,19 +110,61 @@ paths:
             application/json:
               schema:
                 type: "string"
+        400:
+          $ref: "#/components/responses/InvalidParamaters"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
 components:
   securitySchemes: {}
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InvalidParamaters:
+      description: Invalid Parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
     todo:
       properties:
+        id:
+          nullable: false
+          type: "number"
         data:
           nullable: false
           type: "string"
-        complete:
+        completed:
           nullable: false
           type: "boolean"
         completed_timestamp:
           nullable: false
           type: "number"
-    todos:
-      properties: {}
