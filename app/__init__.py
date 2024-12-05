@@ -7,18 +7,25 @@ based on the value of the CONFIG_TYPE environment variable
 
 import os
 from flask import Flask, json
+from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
+from werkzeug.sansio.response import Response
 from app.main.request_log_formatter import RequestFormatter
 
 
+version = "1.0.0-alpha"
+
+
 # Application Factory #
-def create_app():
+def create_app() -> Flask:
+    """Create the Flask application.
+
+    Returns:
+        Flask: a flask object
+    """
 
     app = Flask(__name__)
-
-    # Configure the flask app instance
-    # CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')  # noqa: E501
-    # app.config.from_object(CONFIG_TYPE)
+    CORS(app, resources={r"*": {"origins": "*"}})
 
     # Register blueprints
     register_blueprints(app)
@@ -29,25 +36,17 @@ def create_app():
     # Register error handlers
     register_error_handlers(app)
 
-    @app.errorhandler(HTTPException)
-    def handle_exception(e):
-        """Return JSON instead of HTML for HTTP errors."""
-        # start with the correct headers and status code from the error
-        response = e.get_response()
-        # replace the body with JSON
-        response.data = json.dumps({
-            "code": e.code,
-            "name": e.name,
-            "description": e.description,
-        })
-        response.content_type = "application/json"
-        return response
-
     return app
 
 
 # Helper Functions #
-def register_blueprints(app):
+def register_blueprints(app: Flask):
+    """Register blueprints on the flask application.
+
+    Args:
+        app (Flask): flask application
+    """
+
     from app.main.routes.index import main_blueprint
     from app.main.routes.todos import todos_blueprint
 
@@ -55,11 +54,44 @@ def register_blueprints(app):
     app.register_blueprint(todos_blueprint)
 
 
-def register_error_handlers(app):
-    pass
+def register_error_handlers(app: Flask):
+    """Register error handlers on the flask application.
+
+    Args:
+        app (Flask): flask application
+
+    Returns:
+        None: no return
+    """
+
+    @app.errorhandler(HTTPException)
+    def handle_exception(e: HTTPException) -> Response:
+        """Return JSON instead of HTML for HTTP errors.
+
+        Args:
+            e (HTTPException): HTTP exception
+
+        Returns:
+            Response: the response
+        """
+        # start with the correct headers and status code from the error
+        response = e.get_response()
+        # replace the body with JSON
+        response.data = json.dumps({
+            "code": e.code,
+            "message": e.description,
+        })
+        response.content_type = "application/json"
+        return response
 
 
-def configure_logging(app):
+def configure_logging(app: Flask):
+    """Configure logging for the flask application.
+
+    Args:
+        app (Flask): flask application
+    """
+
     import logging
 
     root = logging.getLogger()

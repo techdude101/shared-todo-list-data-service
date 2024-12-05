@@ -2,10 +2,14 @@ services:
   app: 
     build:
       context: .
-    image: data-service:0.1.0
+    image: data-service:1.0.0-alpha
     container_name: app
     ports:
       - 8080:8000
     environment:
       - IS_PRODUCTION=false
       - USE_WSGI=true
+      - MYSQLDB_HOST=192.168.1.71
+      - MYSQLDB_DB=db_todo
+      - MYSQLDB_USER=todo_user
+      - MYSQLDB_PASSWORD=<changeme>

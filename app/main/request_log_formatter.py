@@ -3,7 +3,7 @@ from flask import has_request_context, request
 
 
 class RequestFormatter(logging.Formatter):
-    def format(self, record):
+    def format(self, record: logging.LogRecord):
         if has_request_context():
             record.url = request.url
             record.remote_addr = request.remote_addr

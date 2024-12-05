@@ -22,3 +22,14 @@ This service is responsible for handling to-do list data.
 ### Lint
 `pip install -r requirements-test.txt`  
 `flake8 app`  
+
+## Release
+*First Release*  
+`standard-version --first-release`  
+
+*Dry Run - simulate the release process without making any modifications*  
+`standard-version --dry-run`  
+
+## Deploy
+`docker tag data-service:1.0.0-alpha td1011/stl-data-service:1.0.0-alpha`  
+`docker push td1011/stl-data-service:1.0.0-alpha`  
