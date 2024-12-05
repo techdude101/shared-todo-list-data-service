@@ -9,3 +9,7 @@ services:
     environment:
       - IS_PRODUCTION=false
       - USE_WSGI=true
+      - MYSQLDB_HOST=192.168.1.71
+      - MYSQLDB_DB=db_todo
+      - MYSQLDB_USER=todo_user
+      - MYSQLDB_PASSWORD=<changeme>

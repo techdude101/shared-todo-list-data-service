@@ -1,13 +1,20 @@
 openapi: "3.0.0"
 info:
-  version: "1"
-  title: "To-Do List"
-  description: ""
+  version: "1.0.0"
+  title: "To-Do List API"
+  description: "The to-do list API allows you to remotely manage to-do lists."
+security:
+  - BearerAuth: []
+servers:
+  - url: http://demo-todo-dataservice.techdude101.com/v1
+    description: Demo server
+  - url: http://todo-dataservice.techdude101.com/v1
+    description: Production server
 paths:
   /todos/{user_id}:
     get:
       operationId: "get_todos"
-      description: ""
+      description: "To-Do list items for a given user ID"
       parameters:
         - in: "path"
           name: "user_id"
@@ -16,22 +23,22 @@ paths:
             type: "integer"
       responses:
         200:
-          description: ""
+          description: "Successful operation"
           content:
             application/json:
               schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/todo"
+                $ref: "#/components/schemas/Todo"
         400:
-          $ref: "#/components/responses/InvalidParamaters"
+          $ref: "#/components/responses/InvalidParameters"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
     post:
       operationId: "add_todo"
-      description: ""
+      description: "Create a new to-do item for a given user ID"
       parameters:
         - in: "path"
           name: "user_id"
@@ -42,24 +49,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/todo"
+              $ref: "#/components/schemas/Todo"
       responses:
         201:
           description: "Created"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/todo"
+                $ref: "#/components/schemas/Todo"
         400:
-          $ref: "#/components/responses/InvalidParamaters"
+          $ref: "#/components/responses/InvalidParameters"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+        409:
+          $ref: "#/components/responses/Conflict"
   /todos/{user_id}/{todo_id}:
     put:
       operationId: "update_todo"
-      description: ""
+      description: "Update a to-do for a given user ID and to-do ID"
       parameters:
         - name: "user_id"
           in: "path"
@@ -75,23 +84,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/todo"
+              $ref: "#/components/schemas/Todo"
       responses:
         200:
-          description: ""
+          description: "Successful operation"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/todo"
+                $ref: "#/components/schemas/Todo"
         400:
-          $ref: "#/components/responses/InvalidParamaters"
+          $ref: "#/components/responses/InvalidParameters"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
     delete:
       operationId: "delete_todo"
-      description: ""
+      description: "Delete a to-do for a given user ID and to-do ID"
       parameters:
         - name: "user_id"
           in: "path"
@@ -104,47 +115,69 @@ paths:
           schema:
             type: "integer"
       responses:
-        200:
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: "string"
+        204:
+          $ref: "#/components/responses/NoContent"
         400:
-          $ref: "#/components/responses/InvalidParamaters"
+          $ref: "#/components/responses/InvalidParameters"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 components:
-  securitySchemes: {}
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
   responses:
+    Ok:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+    NoContent:
+      description: Successful operation
+    Created:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
     NotFound:
       description: The specified resource was not found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
-    InvalidParamaters:
-      description: Invalid Parameters
+            $ref: "#/components/schemas/ApiResponse"
+    InvalidParameters:
+      description: Invalid parameters
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ApiResponse"
     Unauthorized:
       description: Unauthorized
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ApiResponse"
     Forbidden:
       description: Forbidden
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ApiResponse"
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
   schemas:
-    Error:
+    ApiResponse:
       type: object
       properties:
         code:
@@ -154,17 +187,29 @@ components:
       required:
         - code
         - message
-    todo:
+    Todo:
       properties:
         id:
           nullable: false
-          type: "number"
+          type: "integer"
+          example: 1
         data:
           nullable: false
           type: "string"
-        completed:
+          minLength: 1
+          maxLength: 32
+          example: "Cook dinner"
+        complete:
           nullable: false
           type: "boolean"
+          example: false
         completed_timestamp:
-          nullable: false
+          description: "Unix timestamp of when the to-do item was completed"
+          nullable: true
           type: "number"
+          example: 946684800
+      required:
+        - id
+        - data
+        - complete
+        - completed_timestamp
