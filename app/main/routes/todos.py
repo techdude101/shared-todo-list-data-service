@@ -29,29 +29,44 @@ def get_todos(db_connection: MySQLConnection,
 
     current_app.logger.info("get to-dos for user id: %s", user_id)
 
+    todos = []
+
+    db_cursor = None
+
     try:
         user_id_int = int(user_id)
         if user_id_int < 1:
             raise ValueError("User ID must be greater than 0")
 
         db_cursor = db_connection.cursor()
+
         db_cursor.execute("""CALL get_todos_for_user_id((%s))""", (user_id,))
         todos_result = db_cursor.fetchall()
-
-        todos = []
 
         for todo in todos_result:
             todos.append(TodoItem(id=todo[0], data=todo[1],
                                   completed=todo[2],
                                   completed_timestamp=todo[3]).model_dump())
         current_app.logger.debug(todos)
-        return todos
+
+        if db_cursor:
+            current_app.logger.debug("Closing DB cursor")
+            db_cursor.close()
+        if db_connection:
+            current_app.logger.debug("Closing DB connection")
+            db_connection.close()
     except ValueError as ve:
         current_app.logger.exception(ve)
         raise BadRequest()
     except DatabaseError as db_error:
         current_app.logger.exception(db_error)
         raise InternalServerError()
+    finally:
+        if db_cursor:
+            db_cursor.close()
+        if db_connection:
+            db_connection.close()
+    return todos
 
 
 @todos_blueprint.route('/todos/<user_id>', methods=['POST'])

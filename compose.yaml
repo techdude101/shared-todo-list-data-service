@@ -2,7 +2,7 @@ services:
   app: 
     build:
       context: .
-    image: data-service:0.1.0
+    image: data-service:1.0.0-alpha
     container_name: app
     ports:
       - 8080:8000

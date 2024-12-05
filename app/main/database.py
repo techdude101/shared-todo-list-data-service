@@ -23,7 +23,7 @@ def get_database_connection():
             host=host,
             user=user,
             password=password,
-            database=db
+            database=db,
         )
     else:
         return mysql.connector.connect(

@@ -13,7 +13,7 @@ from werkzeug.sansio.response import Response
 from app.main.request_log_formatter import RequestFormatter
 
 
-version = "1.2.3"
+version = "1.0.0-alpha"
 
 
 # Application Factory #
