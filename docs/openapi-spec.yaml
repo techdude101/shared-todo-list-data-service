@@ -6,9 +6,9 @@ info:
 security:
   - BearerAuth: []
 servers:
-  - url: http://demo-todo-dataservice.techdude101.com/v1
+  - url: https://stl-demo.techdude101.com/api
     description: Demo server
-  - url: http://todo-dataservice.techdude101.com/v1
+  - url: http://todo-list.techdude101.com/api
     description: Production server
 paths:
   /todos/{user_id}:
